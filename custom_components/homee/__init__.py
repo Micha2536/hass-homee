@@ -15,6 +15,8 @@ from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import Entity
+"""ergänzt"""
+from .homeegram import HomeegramEntity
 
 from .const import (
     ATTR_ATTRIBUTE,
@@ -438,3 +440,17 @@ async def _migrate_old_unique_ids(hass: HomeAssistant, entry_id: str) -> None:
         return None
 
     await er.async_migrate_entries(hass, entry_id, _async_migrator)
+
+"""ergänzt"""    
+async def async_setup_entry(hass, config_entry, async_add_entities):
+    """Setzt die homeegram-Entitäten in Home Assistant auf."""
+    homee = hass.data[DOMAIN][config_entry.entry_id]
+
+    # Homeegrams abrufen
+    homeegrams = homee.get("homeegrams")
+    entities = []
+
+    for homeegram in homeegrams:
+        entities.append(HomeegramEntity(homee, homeegram))
+
+    async_add_entities(entities)
